@@ -37,7 +37,7 @@ namespace ProyectoSalud
             btnNuevo.Click += BtnNuevo_Click;
             btnEditar.Click += BtnEditar_Click;
             btnEliminar.Click += BtnEliminar_Click;
-            btnRefrescar.Click += (s, e) => { /* Refrescar interfaz - implementar por otro desarrollador */ };
+            btnRefrescar.Click += (s, e) => { /* Refrescar interfaz */ };
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
@@ -70,7 +70,7 @@ namespace ProyectoSalud
             if (dgv.SelectedRows.Count == 0) return;
             if (MessageBox.Show("¿Eliminar cliente?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                // Llamada a eliminación implementada por otro desarrollador en la capa de datos
+                // Llamada a eliminación 
             }
         }
     }

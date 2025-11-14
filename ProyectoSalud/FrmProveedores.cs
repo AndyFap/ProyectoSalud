@@ -37,7 +37,7 @@ namespace ProyectoSalud
             btnNuevo.Click += BtnNuevo_Click;
             btnEditar.Click += BtnEditar_Click;
             btnEliminar.Click += BtnEliminar_Click;
-            btnRefrescar.Click += (s, e) => { /* Refrescar interfaz - implementar por otro desarrollador */ };
+            btnRefrescar.Click += (s, e) => { /* Refrescar interfaz  */ };
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
@@ -55,8 +55,8 @@ namespace ProyectoSalud
         {
             if (dgv.SelectedRows.Count == 0) return;
             var row = dgv.SelectedRows[0];
-            // Extraer valores visuales (si existen) y pasarlos al formulario de edición
-            object idObj = row.Cells[0].Value; // El desarrollador que integre deberá mapear columnas correctamente
+            // Extraer valores visuales si existen y pasarlos al formulario de edición
+            object idObj = row.Cells[0].Value; // hay que mapear columnas correctamente
             string nombre = row.Cells.Count > 1 && row.Cells[1].Value != null ? row.Cells[1].Value.ToString() : string.Empty;
             string contacto = row.Cells.Count > 2 && row.Cells[2].Value != null ? row.Cells[2].Value.ToString() : string.Empty;
             string saldo = row.Cells.Count > 3 && row.Cells[3].Value != null ? row.Cells[3].Value.ToString() : string.Empty;
@@ -77,7 +77,7 @@ namespace ProyectoSalud
             if (dgv.SelectedRows.Count == 0) return;
             if (MessageBox.Show("¿Eliminar proveedor?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                // Llamada a eliminación implementada por otro desarrollador en la capa de datos
+                // Llamar a eliminación
             }
         }
     }

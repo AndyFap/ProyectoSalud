@@ -14,7 +14,7 @@ namespace ProyectoSalud
             gestionarClientesToolStripMenuItem.Click += (s, e) => AbrirFormularioEnPanel(new FrmClientes());
             cuentasBancariasToolStripMenuItem.Click += (s, e) => AbrirFormularioEnPanel(new FrmCuentasBancarias());
             salirToolStripMenuItem.Click += (s, e) => this.Close();
-            // Puedes agregar más eventos para el resto de opciones
+            // se puede agregar mas eventos
         }
 
         private void AbrirFormularioEnPanel(Form formulario)
