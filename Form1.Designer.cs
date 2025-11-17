@@ -103,7 +103,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(11, 4, 0, 4);
-            this.menuStrip1.Size = new System.Drawing.Size(1467, 42);
+            this.menuStrip1.Size = new System.Drawing.Size(1637, 42);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -236,19 +236,19 @@
             // cuentasBancariasToolStripMenuItem
             // 
             this.cuentasBancariasToolStripMenuItem.Name = "cuentasBancariasToolStripMenuItem";
-            this.cuentasBancariasToolStripMenuItem.Size = new System.Drawing.Size(301, 40);
+            this.cuentasBancariasToolStripMenuItem.Size = new System.Drawing.Size(315, 40);
             this.cuentasBancariasToolStripMenuItem.Text = "Cuentas Bancarias";
             // 
             // registrarDepositoToolStripMenuItem
             // 
             this.registrarDepositoToolStripMenuItem.Name = "registrarDepositoToolStripMenuItem";
-            this.registrarDepositoToolStripMenuItem.Size = new System.Drawing.Size(301, 40);
+            this.registrarDepositoToolStripMenuItem.Size = new System.Drawing.Size(315, 40);
             this.registrarDepositoToolStripMenuItem.Text = "Registrar Depósito";
             // 
             // pagoAProveedorToolStripMenuItem
             // 
             this.pagoAProveedorToolStripMenuItem.Name = "pagoAProveedorToolStripMenuItem";
-            this.pagoAProveedorToolStripMenuItem.Size = new System.Drawing.Size(301, 40);
+            this.pagoAProveedorToolStripMenuItem.Size = new System.Drawing.Size(315, 40);
             this.pagoAProveedorToolStripMenuItem.Text = "Pago a Proveedor";
             // 
             // consultasToolStripMenuItem
@@ -295,6 +295,8 @@
             // 
             // salirToolStripMenuItem
             // 
+            this.salirToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.salirToolStripMenuItem.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.salirToolStripMenuItem.Name = "salirToolStripMenuItem";
             this.salirToolStripMenuItem.Size = new System.Drawing.Size(70, 34);
             this.salirToolStripMenuItem.Text = "Salir";
@@ -303,23 +305,26 @@
             // 
             this.panelPrincipal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPrincipal.Location = new System.Drawing.Point(0, 42);
-            this.panelPrincipal.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.panelPrincipal.Margin = new System.Windows.Forms.Padding(6);
             this.panelPrincipal.Name = "panelPrincipal";
-            this.panelPrincipal.Size = new System.Drawing.Size(1467, 789);
+            this.panelPrincipal.Size = new System.Drawing.Size(1637, 1100);
             this.panelPrincipal.TabIndex = 1;
             this.panelPrincipal.Paint += new System.Windows.Forms.PaintEventHandler(this.panelPrincipal_Paint);
             // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1467, 831);
+            this.ClientSize = new System.Drawing.Size(1637, 1142);
+            this.ControlBox = false;
             this.Controls.Add(this.panelPrincipal);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "Menú Principal - Comercializadora de Productos Médicos";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Comercializadora de Productos Médicos";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
