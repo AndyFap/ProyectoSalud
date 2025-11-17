@@ -34,7 +34,7 @@ namespace ProyectoSalud
 
         private void inventarioToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            //prueba
         }
 
         private void gestionarProveedoresToolStripMenuItem_Click(object sender, EventArgs e)
