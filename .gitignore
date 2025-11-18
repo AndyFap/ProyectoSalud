@@ -361,3 +361,48 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Visual Studio / C# / WinForms
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Configuración local sensible
+appsettings.json
+appsettings.*.json
+.env
+*.local
+
+# Archivos de bases de datos locales
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# Dependencias de NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Archivos generados por el IDE o compilador
+*.log
+*.tmp
+*.cache
+
+# Carpetas de Test / Debug
+TestResults/
+*.TestResults/
+*.coverage
+
+# GitGuardian / ggshield
+# Evita subir archivos donde puedas tener secretos temporales
+.secrets.baseline
+.ggshield.yml
+
+# Otros
+*.bak
+*.old

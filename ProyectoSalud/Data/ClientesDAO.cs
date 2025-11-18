@@ -43,7 +43,7 @@ namespace ProyectoSalud.ProyectoSalud.Data
             {
                 conexion.Open();
 
-                using (var cmd = new SqlCommand("spActualizarCliente"))
+                using (var cmd = new SqlCommand("spActualizarCliente", conexion))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 

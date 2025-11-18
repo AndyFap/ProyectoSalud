@@ -1,4 +1,4 @@
-﻿namespace ProyectoSalud.ProyectoSalud
+﻿namespace ProyectoSalud.ProyectoSalud.Models
 {
     partial class FrmClienteEdicion : System.Windows.Forms.Form
     {

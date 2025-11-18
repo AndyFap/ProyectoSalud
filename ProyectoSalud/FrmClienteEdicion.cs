@@ -13,11 +13,9 @@ namespace ProyectoSalud.ProyectoSalud.Models
 {
     public partial class FrmClienteEdicion : Form
     {
-        public Cliente ClienteInfo { get; private set; }
-
         private TextBox txtNombre, txtTipoCliente, txtLimiteCredito;
 
-        private bool esEdicion = false;
+        public Cliente ClienteInfo { get; private set; }
 
         public FrmClienteEdicion()
         {
@@ -27,7 +25,6 @@ namespace ProyectoSalud.ProyectoSalud.Models
 
         public FrmClienteEdicion(Cliente cliente) : this()
         {
-            esEdicion = true;
             ClienteInfo = cliente;
 
             txtNombre.Text = cliente.nombre;
@@ -35,29 +32,50 @@ namespace ProyectoSalud.ProyectoSalud.Models
             txtLimiteCredito.Text = cliente.limiteCredito;
         }
 
+        private void FrmClienteEdicion_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private void InitializeComponent()
         {
-            this.Text = "Cliente";
-            this.Width = 350;
-            this.Height = 230;
+            this.SuspendLayout();
 
-            Label lbl1 = new Label { Text = "Nombre", Top = 20, Left = 10 };
-            txtNombre = new TextBox { Top = 20, Left = 120, Width = 200 };
+            // TextBox Nombre
+            txtNombre = new TextBox { Top = 20, Left = 120, Width = 140 };
+            Label lblNombre = new Label { Text = "Nombre:", Top = 20, Left = 20, Width = 100 };
 
-            Label lbl2 = new Label { Text = "TipoCliente", Top = 60, Left = 10 };
-            txtTipoCliente = new TextBox { Top = 60, Left = 120, Width = 200 };
+            // TextBox TipoCliente
+            txtTipoCliente = new TextBox { Top = 60, Left = 120, Width = 140 };
+            Label lblTipo = new Label { Text = "Tipo Cliente:", Top = 60, Left = 20, Width = 100 };
 
-            Label lbl3 = new Label { Text = "LimiteCredito", Top = 100, Left = 10 };
-            txtLimiteCredito = new TextBox { Top = 100, Left = 120, Width = 200 };
+            // TextBox LimiteCredito
+            txtLimiteCredito = new TextBox { Top = 100, Left = 120, Width = 140 };
+            Label lblLimite = new Label { Text = "Límite Crédito:", Top = 100, Left = 20, Width = 100 };
 
-            Button btnGuardar = new Button { Text = "Guardar", Top = 140, Left = 120 };
-            Button btnCancelar = new Button { Text = "Cancelar", Top = 140, Left = 220 };
-
+            // Botón Guardar
+            Button btnGuardar = new Button { Text = "Guardar", Top = 150, Left = 50 };
             btnGuardar.Click += BtnGuardar_Click;
+
+            // Botón Cancelar
+            Button btnCancelar = new Button { Text = "Cancelar", Top = 150, Left = 150 };
             btnCancelar.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
 
-            this.Controls.AddRange(new Control[] { lbl1, txtNombre, lbl2, txtTipoCliente, lbl3, txtLimiteCredito, btnGuardar, btnCancelar });
+            // Agregar controles al formulario
+            this.Controls.AddRange(new Control[] {
+            lblNombre, txtNombre,
+            lblTipo, txtTipoCliente,
+            lblLimite, txtLimiteCredito,
+            btnGuardar, btnCancelar
+            });
+
+            this.ClientSize = new System.Drawing.Size(300, 220);
+            this.Name = "FrmClienteEdicion";
+            this.Text = "Edición de Cliente";
+
+            this.ResumeLayout(false);
         }
+
 
         private void BtnGuardar_Click(object sender, EventArgs e)
         {

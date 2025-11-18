@@ -118,6 +118,9 @@
     <Compile Include="ProyectoSalud\FrmClientes.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ProyectoSalud\FrmClientes.Designer.cs">
+      <DependentUpon>FrmClientes.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProyectoSalud\FrmCuentasBancarias.cs">
       <SubType>Form</SubType>
     </Compile>

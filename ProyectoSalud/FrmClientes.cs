@@ -1,11 +1,11 @@
-using ProyectoSalud.ProyectoSalud.Data;
+﻿using ProyectoSalud.ProyectoSalud.Data;
 using ProyectoSalud.ProyectoSalud.Models;
 using System;
 using System.Windows.Forms;
 
 namespace ProyectoSalud
 {
-    public class FrmClientes : Form
+    public partial class FrmClientes : Form
     {
         private DataGridView dgv;
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
@@ -16,38 +16,21 @@ namespace ProyectoSalud
         {
             clienteDao = new ClientesDAO(new Database());
             InitializeComponent();
-        }
 
-        private void InitializeComponent()
-        {
-            this.Text = "Clientes";
-            this.Width = 600;
-            this.Height = 400;
+            dgv = new DataGridView { Top = 10, Left = 10, Width = 700, Height = 300, ReadOnly = true };
+            btnNuevo = new Button { Text = "Nuevo", Top = 320, Left = 10 };
+            btnEditar = new Button { Text = "Editar", Top = 320, Left = 100 };
+            btnEliminar = new Button { Text = "Eliminar", Top = 320, Left = 190 };
+            btnRefrescar = new Button { Text = "Refrescar", Top = 320, Left = 280 };
 
-            dgv = new DataGridView
-            {
-                Top = 10,
-                Left = 10,
-                Width = 560,
-                Height = 250,
-                ReadOnly = true,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            };
+            // Agregar controles al formulario
+            this.Controls.AddRange(new Control[] { dgv, btnNuevo, btnEditar, btnEliminar, btnRefrescar });
 
-            btnNuevo = new Button { Text = "Nuevo", Top = 270, Left = 10 };
-            btnEditar = new Button { Text = "Editar", Top = 270, Left = 100 };
-            btnEliminar = new Button { Text = "Eliminar", Top = 270, Left = 190 };
-            btnRefrescar = new Button { Text = "Refrescar", Top = 270, Left = 280 };
-
+            // Conectar eventos
             btnNuevo.Click += BtnNuevo_Click;
             btnEditar.Click += BtnEditar_Click;
             btnEliminar.Click += BtnEliminar_Click;
             btnRefrescar.Click += (s, e) => CargarClientes();
-
-            this.Controls.AddRange(new Control[] { dgv, btnNuevo, btnEditar, btnEliminar, btnRefrescar });
-
-            this.Load += FrmClientes_Load;
         }
 
         private void FrmClientes_Load(object sender, EventArgs e)
@@ -66,8 +49,15 @@ namespace ProyectoSalud
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    clienteDao.InsertarCliente(frm.ClienteInfo);
-                    CargarClientes();
+                    try
+                    {
+                        clienteDao.InsertarCliente(frm.ClienteInfo);
+                        CargarClientes();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al insertar cliente: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -76,22 +66,28 @@ namespace ProyectoSalud
         {
             if (dgv.SelectedRows.Count == 0) return;
 
-            DataGridViewRow row = dgv.SelectedRows[0];
-
+            var row = dgv.SelectedRows[0];
             Cliente cliente = new Cliente
             {
                 clienteID = Convert.ToInt32(row.Cells["clienteID"].Value),
                 nombre = row.Cells["nombre"].Value.ToString(),
                 tipoCliente = row.Cells["tipoCliente"].Value.ToString(),
-                limiteCredito = row.Cells["limiteCredito"].Value.ToString(),
+                limiteCredito = row.Cells["limiteCredito"].Value.ToString()
             };
 
             using (var frm = new FrmClienteEdicion(cliente))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    clienteDao.ModificarCliente(frm.ClienteInfo);
-                    CargarClientes();
+                    try
+                    {
+                        clienteDao.ModificarCliente(frm.ClienteInfo);
+                        CargarClientes();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al modificar cliente: {ex.Message}");
+                    }
                 }
             }
         }
@@ -100,12 +96,21 @@ namespace ProyectoSalud
         {
             if (dgv.SelectedRows.Count == 0) return;
 
-            var id = Convert.ToInt32(dgv.SelectedRows[0].Cells["clienteID"].Value);
+            var cellVal = dgv.SelectedRows[0].Cells["clienteID"].Value;
+            if (cellVal == null || cellVal == DBNull.Value) return;
+            int id = Convert.ToInt32(cellVal);
 
-            if (MessageBox.Show("�Eliminar cliente?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("¿Eliminar cliente?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                clienteDao.EliminarCliente(id);
-                CargarClientes();
+                try
+                {
+                    clienteDao.EliminarCliente(id);
+                    CargarClientes();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al eliminar cliente: {ex.Message}");
+                }
             }
         }
     }
