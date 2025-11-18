@@ -15,29 +15,20 @@ namespace ProyectoSalud
 
         private void InitializeComponent()
         {
-            this.Text = "Cuentas Bancarias";
-            this.Dock = DockStyle.Fill;
+            this.SuspendLayout();
+            // 
+            // FrmCuentasBancarias
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "FrmCuentasBancarias";
+            this.Load += new System.EventHandler(this.FrmCuentasBancarias_Load);
+            this.ResumeLayout(false);
 
-            this.dgv = new DataGridView { Dock = DockStyle.Top, Height = 300, ReadOnly = true, SelectionMode = DataGridViewSelectionMode.FullRowSelect, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill };
-            this.btnNuevo = new Button { Text = "Nuevo", Width = 100, Left = 10 };
-            this.btnEditar = new Button { Text = "Editar", Width = 100, Left = 120 };
-            this.btnEliminar = new Button { Text = "Eliminar", Width = 100, Left = 230 };
-            this.btnRefrescar = new Button { Text = "Refrescar", Width = 100, Left = 340 };
+        }
 
-            var panel = new Panel { Dock = DockStyle.Bottom, Height = 40 };
-            panel.Controls.Add(btnNuevo);
-            panel.Controls.Add(btnEditar);
-            panel.Controls.Add(btnEliminar);
-            panel.Controls.Add(btnRefrescar);
+        private void FrmCuentasBancarias_Load(object sender, EventArgs e)
+        {
 
-            this.Controls.Add(panel);
-            this.Controls.Add(dgv);
-
-            // Eventos UI - sin lógica de datos
-            btnNuevo.Click += BtnNuevo_Click;
-            btnEditar.Click += BtnEditar_Click;
-            btnEliminar.Click += BtnEliminar_Click;
-            btnRefrescar.Click += (s, e) => { /* Refrescar interfaz */ };
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
