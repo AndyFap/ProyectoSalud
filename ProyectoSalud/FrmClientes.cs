@@ -1,43 +1,46 @@
+ï»¿using ProyectoSalud.ProyectoSalud.Data;
+using ProyectoSalud.ProyectoSalud.Models;
 using System;
 using System.Windows.Forms;
 
 namespace ProyectoSalud
 {
-    public class FrmClientes : Form
+    public partial class FrmClientes : Form
     {
         private DataGridView dgv;
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
 
+        private ClientesDAO clienteDao;
+
         public FrmClientes()
         {
+            clienteDao = new ClientesDAO(new Database());
             InitializeComponent();
-        }
 
-        private void InitializeComponent()
-        {
-            this.Text = "Gestionar Clientes";
-            this.Dock = DockStyle.Fill;
+            dgv = new DataGridView { Top = 10, Left = 10, Width = 700, Height = 300, ReadOnly = true };
+            btnNuevo = new Button { Text = "Nuevo", Top = 320, Left = 10 };
+            btnEditar = new Button { Text = "Editar", Top = 320, Left = 100 };
+            btnEliminar = new Button { Text = "Eliminar", Top = 320, Left = 190 };
+            btnRefrescar = new Button { Text = "Refrescar", Top = 320, Left = 280 };
 
-            this.dgv = new DataGridView { Dock = DockStyle.Top, Height = 300, ReadOnly = true, SelectionMode = DataGridViewSelectionMode.FullRowSelect, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill };
-            this.btnNuevo = new Button { Text = "Nuevo", Width = 100, Left = 10 };
-            this.btnEditar = new Button { Text = "Editar", Width = 100, Left = 120 };
-            this.btnEliminar = new Button { Text = "Eliminar", Width = 100, Left = 230 };
-            this.btnRefrescar = new Button { Text = "Refrescar", Width = 100, Left = 340 };
+            // Agregar controles al formulario
+            this.Controls.AddRange(new Control[] { dgv, btnNuevo, btnEditar, btnEliminar, btnRefrescar });
 
-            var panel = new Panel { Dock = DockStyle.Bottom, Height = 40 };
-            panel.Controls.Add(btnNuevo);
-            panel.Controls.Add(btnEditar);
-            panel.Controls.Add(btnEliminar);
-            panel.Controls.Add(btnRefrescar);
-
-            this.Controls.Add(panel);
-            this.Controls.Add(dgv);
-
-            // Eventos UI - sin lógica de datos
+            // Conectar eventos
             btnNuevo.Click += BtnNuevo_Click;
             btnEditar.Click += BtnEditar_Click;
             btnEliminar.Click += BtnEliminar_Click;
-            btnRefrescar.Click += (s, e) => { /* Refrescar interfaz */ };
+            btnRefrescar.Click += (s, e) => CargarClientes();
+        }
+
+        private void FrmClientes_Load(object sender, EventArgs e)
+        {
+            CargarClientes();
+        }
+
+        private void CargarClientes()
+        {
+            dgv.DataSource = clienteDao.ObtenerClientes();
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
@@ -46,7 +49,15 @@ namespace ProyectoSalud
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    // Actualizar vista - implementar en integración con DB
+                    try
+                    {
+                        clienteDao.InsertarCliente(frm.ClienteInfo);
+                        CargarClientes();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al insertar cliente: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -54,13 +65,29 @@ namespace ProyectoSalud
         private void BtnEditar_Click(object sender, EventArgs e)
         {
             if (dgv.SelectedRows.Count == 0) return;
+
             var row = dgv.SelectedRows[0];
-            using (var frm = new FrmClienteEdicion())
+            Cliente cliente = new Cliente
             {
-                frm.SetValuesFromRow(row);
+                clienteID = Convert.ToInt32(row.Cells["clienteID"].Value),
+                nombre = row.Cells["nombre"].Value.ToString(),
+                tipoCliente = row.Cells["tipoCliente"].Value.ToString(),
+                limiteCredito = row.Cells["limiteCredito"].Value.ToString()
+            };
+
+            using (var frm = new FrmClienteEdicion(cliente))
+            {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    // Actualizar vista - implementar en integración con DB
+                    try
+                    {
+                        clienteDao.ModificarCliente(frm.ClienteInfo);
+                        CargarClientes();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al modificar cliente: {ex.Message}");
+                    }
                 }
             }
         }
@@ -68,45 +95,23 @@ namespace ProyectoSalud
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
             if (dgv.SelectedRows.Count == 0) return;
-            if (MessageBox.Show("¿Eliminar cliente?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+
+            var cellVal = dgv.SelectedRows[0].Cells["clienteID"].Value;
+            if (cellVal == null || cellVal == DBNull.Value) return;
+            int id = Convert.ToInt32(cellVal);
+
+            if (MessageBox.Show("Â¿Eliminar cliente?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                // Llamada a eliminación 
+                try
+                {
+                    clienteDao.EliminarCliente(id);
+                    CargarClientes();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al eliminar cliente: {ex.Message}");
+                }
             }
-        }
-    }
-
-    // Formulario de edición/alta de cliente (solo UI)
-    public class FrmClienteEdicion : Form
-    {
-        private TextBox txtNombre, txtEstadoCuenta;
-        private Button btnGuardar, btnCancelar;
-
-        public FrmClienteEdicion()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            this.Text = "Cliente";
-            this.Width = 350;
-            this.Height = 200;
-            Label lbl1 = new Label { Text = "Nombre", Top = 20, Left = 10 };
-            txtNombre = new TextBox { Top = 20, Left = 120, Width = 200 };
-            Label lbl2 = new Label { Text = "Estado Cuenta", Top = 60, Left = 10 };
-            txtEstadoCuenta = new TextBox { Top = 60, Left = 120, Width = 200 };
-            btnGuardar = new Button { Text = "Guardar", Top = 100, Left = 120 };
-            btnCancelar = new Button { Text = "Cancelar", Top = 100, Left = 220 };
-            btnGuardar.Click += (s, e) => { this.DialogResult = DialogResult.OK; }; // Solo UI
-            btnCancelar.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
-            this.Controls.AddRange(new Control[] { lbl1, txtNombre, lbl2, txtEstadoCuenta, btnGuardar, btnCancelar });
-        }
-
-        public void SetValuesFromRow(DataGridViewRow row)
-        {
-            if (row == null) return;
-            txtNombre.Text = row.Cells.Count > 1 && row.Cells[1].Value != null ? row.Cells[1].Value.ToString() : string.Empty;
-            txtEstadoCuenta.Text = row.Cells.Count > 2 && row.Cells[2].Value != null ? row.Cells[2].Value.ToString() : string.Empty;
         }
     }
 }
