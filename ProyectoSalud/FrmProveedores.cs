@@ -1,43 +1,77 @@
+ï»¿using ProyectoSalud.ProyectoSalud.Data;
+using ProyectoSalud.ProyectoSalud.Models;
 using System;
 using System.Windows.Forms;
 
 namespace ProyectoSalud
 {
-    public class FrmProveedores : Form
+    public partial class FrmProveedores : Form
     {
         private DataGridView dgv;
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
 
+        private ProveedoresDAO proveedorDao;
+
         public FrmProveedores()
         {
+            proveedorDao = new ProveedoresDAO(new Database());
             InitializeComponent();
-        }
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // FrmProveedores
-            // 
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "FrmProveedores";
-            this.Load += new System.EventHandler(this.FrmProveedores_Load);
-            this.ResumeLayout(false);
+            // Crear controles manualmente igual que el FrmClientes
+            dgv = new DataGridView
+            {
+                Top = 10,
+                Left = 10,
+                Width = 700,
+                Height = 300,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect
+            };
 
+            btnNuevo = new Button { Text = "Nuevo", Top = 320, Left = 10 };
+            btnEditar = new Button { Text = "Editar", Top = 320, Left = 100 };
+            btnEliminar = new Button { Text = "Eliminar", Top = 320, Left = 190 };
+            btnRefrescar = new Button { Text = "Refrescar", Top = 320, Left = 280 };
+
+            // Agregar controles
+            this.Controls.AddRange(new Control[]
+            {
+                dgv, btnNuevo, btnEditar, btnEliminar, btnRefrescar
+            });
+
+            // Asignar eventos
+            btnNuevo.Click += BtnNuevo_Click;
+            btnEditar.Click += BtnEditar_Click;
+            btnEliminar.Click += BtnEliminar_Click;
+            btnRefrescar.Click += (s, e) => CargarProveedores();
         }
 
         private void FrmProveedores_Load(object sender, EventArgs e)
         {
+            CargarProveedores();
+        }
 
+        private void CargarProveedores()
+        {
+            dgv.DataSource = proveedorDao.ObtenerProveedor();
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
-            using (var frm = new FrmProveedorEdicion())
+            using (var frm = new FrmProveedoresEdicion())
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    // Actualizar vista - implementar en integración con DB
+                    try
+                    {
+                        proveedorDao.InsertarProveedor(frm.ProveedorInfo);
+                        CargarProveedores();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al insertar proveedor: " + ex.Message,
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -45,20 +79,32 @@ namespace ProyectoSalud
         private void BtnEditar_Click(object sender, EventArgs e)
         {
             if (dgv.SelectedRows.Count == 0) return;
-            var row = dgv.SelectedRows[0];
-            // Extraer valores visuales si existen y pasarlos al formulario de edición
-            object idObj = row.Cells[0].Value; // hay que mapear columnas correctamente
-            string nombre = row.Cells.Count > 1 && row.Cells[1].Value != null ? row.Cells[1].Value.ToString() : string.Empty;
-            string contacto = row.Cells.Count > 2 && row.Cells[2].Value != null ? row.Cells[2].Value.ToString() : string.Empty;
-            string saldo = row.Cells.Count > 3 && row.Cells[3].Value != null ? row.Cells[3].Value.ToString() : string.Empty;
 
-            using (var frm = new FrmProveedorEdicion())
+            var row = dgv.SelectedRows[0];
+
+            Proveedor p = new Proveedor
             {
-                // Opcional: el integrador puede exponer un constructor con parámetros o propiedades públicas
-                frm.SetValues(nombre, contacto, saldo);
+                proveedorID = Convert.ToInt32(row.Cells["proveedorID"].Value),
+                nombre = row.Cells["nombre"].Value.ToString(),
+                contacto = row.Cells["contacto"].Value.ToString(),
+                saldo = Convert.ToDecimal(row.Cells["saldo"].Value),
+                limiteCredito = Convert.ToDecimal(row.Cells["limiteCredito"].Value),
+                creditoDisponible = Convert.ToDecimal(row.Cells["creditoDisponible"].Value)
+            };
+
+            using (var frm = new FrmProveedoresEdicion(p))
+            {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    // Actualizar vista - implementar en integración con DB
+                    try
+                    {
+                        proveedorDao.ModificarProveedor(frm.ProveedorInfo);
+                        CargarProveedores();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al modificar proveedor: {ex.Message}");
+                    }
                 }
             }
         }
@@ -66,48 +112,25 @@ namespace ProyectoSalud
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
             if (dgv.SelectedRows.Count == 0) return;
-            if (MessageBox.Show("¿Eliminar proveedor?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+
+            var cellVal = dgv.SelectedRows[0].Cells["proveedorID"].Value;
+            if (cellVal == null || cellVal == DBNull.Value) return;
+
+            int id = Convert.ToInt32(cellVal);
+
+            if (MessageBox.Show("Â¿Eliminar proveedor?", "Confirmar",
+                MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                // Llamar a eliminación
+                try
+                {
+                    proveedorDao.EliminarProveedor(id);
+                    CargarProveedores();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al eliminar proveedor: {ex.Message}");
+                }
             }
-        }
-    }
-
-    // Formulario de edición/alta de proveedor (solo UI)
-    public class FrmProveedorEdicion : Form
-    {
-        private TextBox txtNombre, txtContacto, txtSaldo;
-        private Button btnGuardar, btnCancelar;
-
-        public FrmProveedorEdicion()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            this.Text = "Proveedor";
-            this.Width = 350;
-            this.Height = 220;
-            Label lbl1 = new Label { Text = "Nombre", Top = 20, Left = 10 };
-            txtNombre = new TextBox { Top = 20, Left = 100, Width = 200 };
-            Label lbl2 = new Label { Text = "Contacto", Top = 60, Left = 10 };
-            txtContacto = new TextBox { Top = 60, Left = 100, Width = 200 };
-            Label lbl3 = new Label { Text = "Saldo", Top = 100, Left = 10 };
-            txtSaldo = new TextBox { Top = 100, Left = 100, Width = 200 };
-            btnGuardar = new Button { Text = "Guardar", Top = 140, Left = 100 };
-            btnCancelar = new Button { Text = "Cancelar", Top = 140, Left = 200 };
-            btnGuardar.Click += (s, e) => { this.DialogResult = DialogResult.OK; }; // Solo UI
-            btnCancelar.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
-            this.Controls.AddRange(new Control[] { lbl1, txtNombre, lbl2, txtContacto, lbl3, txtSaldo, btnGuardar, btnCancelar });
-        }
-
-        // Método para que el integrador pueble los controles desde la capa de datos
-        public void SetValues(string nombre, string contacto, string saldo)
-        {
-            txtNombre.Text = nombre;
-            txtContacto.Text = contacto;
-            txtSaldo.Text = saldo;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace ProyectoSalud.ProyectoSalud.Models
 {
-    partial class FrmClienteEdicion : System.Windows.Forms.Form
+    partial class FrmProveedoresEdicion : System.Windows.Forms.Form
     {
         /// <summary>
         /// Required designer variable.
@@ -16,7 +16,7 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
-            }   
+            }
             base.Dispose(disposing);
         }
 
