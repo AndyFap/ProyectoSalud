@@ -1,6 +1,8 @@
-﻿using ProyectoSalud.ProyectoSalud.Data;
+using ProyectoSalud.ProyectoSalud.Data;
 using ProyectoSalud.ProyectoSalud.Models;
+using ProyectoSalud.UI;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ProyectoSalud
@@ -9,51 +11,67 @@ namespace ProyectoSalud
     {
         private DataGridView dgv;
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
-
+        private Panel panelTitulo;
+        private Panel panelBotones;
         private ProveedoresDAO proveedorDao;
 
         public FrmProveedores()
         {
             proveedorDao = new ProveedoresDAO(new Database());
             InitializeComponent();
+            ConfigurarInterfazModerna();
+        }
 
-            // Crear controles manualmente igual que el FrmClientes
+        private void ConfigurarInterfazModerna()
+        {
+            // Configurar el formulario
+            this.BackColor = ModernUIHelper.ColorFondo;
+
+            // Crear panel de título
+            panelTitulo = ModernUIHelper.CrearPanelTitulo("Gestión de Proveedores", 70);
+
+            // Crear botones modernos
+            btnNuevo = ModernUIHelper.CrearBotonPrimario("Nuevo Proveedor", 180);
+            btnEditar = ModernUIHelper.CrearBotonExito("Editar", 140);
+            btnEliminar = ModernUIHelper.CrearBotonPeligro("Eliminar", 140);
+            btnRefrescar = ModernUIHelper.CrearBotonInfo("Refrescar", 140);
+
+            // Crear panel de botones
+            panelBotones = ModernUIHelper.CrearPanelBotones(btnNuevo, btnEditar, btnEliminar, btnRefrescar);
+
+            // Crear y configurar DataGridView
             dgv = new DataGridView
             {
-                Top = 10,
-                Left = 10,
-                Width = 700,
-                Height = 300,
-                ReadOnly = true,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                Dock = DockStyle.Fill
             };
+            ModernUIHelper.AplicarEstiloDataGrid(dgv);
 
-            btnNuevo = new Button { Text = "Nuevo", Top = 320, Left = 10 };
-            btnEditar = new Button { Text = "Editar", Top = 320, Left = 100 };
-            btnEliminar = new Button { Text = "Eliminar", Top = 320, Left = 190 };
-            btnRefrescar = new Button { Text = "Refrescar", Top = 320, Left = 280 };
+            // Agregar controles en orden
+            this.Controls.Add(dgv);
+            this.Controls.Add(panelBotones);
+            this.Controls.Add(panelTitulo);
 
-            // Agregar controles
-            this.Controls.AddRange(new Control[]
-            {
-                dgv, btnNuevo, btnEditar, btnEliminar, btnRefrescar
-            });
-
-            // Asignar eventos
+            // Conectar eventos
             btnNuevo.Click += BtnNuevo_Click;
             btnEditar.Click += BtnEditar_Click;
             btnEliminar.Click += BtnEliminar_Click;
             btnRefrescar.Click += (s, e) => CargarProveedores();
-        }
-
-        private void FrmProveedores_Load(object sender, EventArgs e)
-        {
-            CargarProveedores();
+            
+            // Cargar datos al iniciar
+            this.Load += (s, e) => CargarProveedores();
         }
 
         private void CargarProveedores()
         {
-            dgv.DataSource = proveedorDao.ObtenerProveedor();
+            try
+            {
+                dgv.DataSource = proveedorDao.ObtenerProveedor();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar proveedores: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
@@ -65,6 +83,8 @@ namespace ProyectoSalud
                     try
                     {
                         proveedorDao.InsertarProveedor(frm.ProveedorInfo);
+                        ModernUIHelper.MostrarNotificacion(this, "Proveedor agregado exitosamente",
+                            ModernUIHelper.ColorExito);
                         CargarProveedores();
                     }
                     catch (Exception ex)
@@ -78,7 +98,12 @@ namespace ProyectoSalud
 
         private void BtnEditar_Click(object sender, EventArgs e)
         {
-            if (dgv.SelectedRows.Count == 0) return;
+            if (dgv.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Por favor seleccione un proveedor para editar", "Información",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             var row = dgv.SelectedRows[0];
 
@@ -99,11 +124,14 @@ namespace ProyectoSalud
                     try
                     {
                         proveedorDao.ModificarProveedor(frm.ProveedorInfo);
+                        ModernUIHelper.MostrarNotificacion(this, "Proveedor actualizado exitosamente",
+                            ModernUIHelper.ColorExito);
                         CargarProveedores();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error al modificar proveedor: {ex.Message}");
+                        MessageBox.Show($"Error al modificar proveedor: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -111,24 +139,32 @@ namespace ProyectoSalud
 
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgv.SelectedRows.Count == 0) return;
+            if (dgv.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Por favor seleccione un proveedor para eliminar", "Información",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             var cellVal = dgv.SelectedRows[0].Cells["proveedorID"].Value;
             if (cellVal == null || cellVal == DBNull.Value) return;
 
             int id = Convert.ToInt32(cellVal);
 
-            if (MessageBox.Show("¿Eliminar proveedor?", "Confirmar",
-                MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("¿Está seguro de eliminar este proveedor?", "Confirmar eliminación",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 try
                 {
                     proveedorDao.EliminarProveedor(id);
+                    ModernUIHelper.MostrarNotificacion(this, "Proveedor eliminado exitosamente",
+                        ModernUIHelper.ColorPeligro);
                     CargarProveedores();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error al eliminar proveedor: {ex.Message}");
+                    MessageBox.Show($"Error al eliminar proveedor: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -15,7 +15,23 @@ namespace ProyectoSalud.ProyectoSalud.Data
 
         public Database()
         {
-            conexion = ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString;
+            var connectionStringSettings = ConfigurationManager.ConnectionStrings["ConexionBD"];
+            
+            if (connectionStringSettings == null)
+            {
+                throw new ConfigurationErrorsException(
+                    "No se encontró la cadena de conexión 'ConexionBD' en App.config. " +
+                    "Asegúrese de que el archivo App.config contiene la sección <connectionStrings> " +
+                    "con un elemento llamado 'ConexionBD'.");
+            }
+            
+            conexion = connectionStringSettings.ConnectionString;
+            
+            if (string.IsNullOrWhiteSpace(conexion))
+            {
+                throw new ConfigurationErrorsException(
+                    "La cadena de conexión 'ConexionBD' está vacía en App.config.");
+            }
         }
 
         public SqlConnection GetConnection()

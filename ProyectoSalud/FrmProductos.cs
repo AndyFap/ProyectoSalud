@@ -1,128 +1,146 @@
+using ProyectoSalud.UI;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ProyectoSalud
 {
-    public class FrmProductos : Form
+    public partial class FrmProductos : Form
     {
         private DataGridView dgv;
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
+        private Panel panelTitulo;
+        private Panel panelBotones;
 
         public FrmProductos()
         {
             InitializeComponent();
+            ConfigurarInterfazModerna();
         }
 
-        private void InitializeComponent()
+        private void ConfigurarInterfazModerna()
         {
-            this.SuspendLayout();
-            // 
-            // FrmProductos
-            // 
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "FrmProductos";
-            this.Load += new System.EventHandler(this.FrmProductos_Load);
-            this.ResumeLayout(false);
+            // Configurar el formulario
+            this.BackColor = ModernUIHelper.ColorFondo;
 
+            // Crear panel de t铆tulo
+            panelTitulo = ModernUIHelper.CrearPanelTitulo("Gesti贸n de Productos", 60);
+
+            // Crear botones modernos
+            btnNuevo = ModernUIHelper.CrearBotonPrimario("Nuevo Producto", 170);
+            btnEditar = ModernUIHelper.CrearBotonExito("Editar", 140);
+            btnEliminar = ModernUIHelper.CrearBotonPeligro("Eliminar", 140);
+            btnRefrescar = ModernUIHelper.CrearBotonInfo("Refrescar", 140);
+
+            // Crear panel de botones
+            panelBotones = ModernUIHelper.CrearPanelBotones(btnNuevo, btnEditar, btnEliminar, btnRefrescar);
+
+            // Crear y configurar DataGridView
+            dgv = new DataGridView
+            {
+                Dock = DockStyle.Fill
+            };
+            ModernUIHelper.AplicarEstiloDataGrid(dgv);
+
+            // Agregar controles en orden
+            this.Controls.Add(dgv);
+            this.Controls.Add(panelBotones);
+            this.Controls.Add(panelTitulo);
+
+            // Conectar eventos
+            btnNuevo.Click += BtnNuevo_Click;
+            btnEditar.Click += BtnEditar_Click;
+            btnEliminar.Click += BtnEliminar_Click;
+            btnRefrescar.Click += (s, e) => CargarProductos();
+            
+            // Cargar datos al iniciar
+            this.Load += (s, e) => CargarProductos();
         }
 
-        private void FrmProductos_Load(object sender, EventArgs e)
+        private void CargarProductos()
         {
-
+            try
+            {
+                // TODO: Implementar carga de productos desde la base de datos
+                // dgv.DataSource = productosDAO.ObtenerProductos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar productos: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
-            using (var frm = new FrmProductoEdicion())
-            {
-                if (frm.ShowDialog() == DialogResult.OK)
-                {
-                    // Actualizar vista - implementar en integraci髇 con DB
-                }
-            }
+            MessageBox.Show(
+                "La funcionalidad de agregar productos est谩 en desarrollo.\n\n" +
+                "Pr贸ximamente podr谩s agregar nuevos productos al inventario.",
+                "Funci贸n en Desarrollo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+            
+            // TODO: Implementar formulario de edici贸n de productos
+            // using (var frm = new FrmProductoEdicion())
+            // {
+            //     if (frm.ShowDialog() == DialogResult.OK)
+            //     {
+            //         CargarProductos();
+            //     }
+            // }
         }
 
         private void BtnEditar_Click(object sender, EventArgs e)
         {
-            if (dgv.SelectedRows.Count == 0) return;
-            var row = dgv.SelectedRows[0];
-            using (var frm = new FrmProductoEdicion())
+            if (dgv.SelectedRows.Count == 0)
             {
-                // el integrador puede llenar el formulario mediante SetValues
-                frm.SetValuesFromRow(row);
-                if (frm.ShowDialog() == DialogResult.OK)
-                {
-                    // Actualizar vista - implementar en integraci髇 con DB
-                }
+                MessageBox.Show("Por favor seleccione un producto para editar", "Informaci贸n",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
+            
+            MessageBox.Show(
+                "La funcionalidad de editar productos est谩 en desarrollo.\n\n" +
+                "Pr贸ximamente podr谩s modificar la informaci贸n de los productos.",
+                "Funci贸n en Desarrollo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+            
+            // TODO: Implementar edici贸n de productos
+            // using (var frm = new FrmProductoEdicion(productoSeleccionado))
+            // {
+            //     if (frm.ShowDialog() == DialogResult.OK)
+            //     {
+            //         CargarProductos();
+            //     }
+            // }
         }
 
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgv.SelectedRows.Count == 0) return;
-            if (MessageBox.Show("縀liminar producto?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (dgv.SelectedRows.Count == 0)
             {
-                // Llamadar a eliminaci髇
+                MessageBox.Show("Por favor seleccione un producto para eliminar", "Informaci贸n",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-        }
-    }
 
-    // Formulario de edici髇/alta de producto (solo UI)
-    public class FrmProductoEdicion : Form
-    {
-        private TextBox txtNombre, txtStock, txtPrecio, txtBodega;
-        private DateTimePicker dtpFechaVenc;
-        private Button btnGuardar, btnCancelar;
-
-        public FrmProductoEdicion()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            this.Text = "Producto";
-            this.Width = 420;
-            this.Height = 320;
-
-            Label lbl1 = new Label { Text = "Nombre", Top = 20, Left = 10 };
-            txtNombre = new TextBox { Top = 20, Left = 140, Width = 240 };
-
-            Label lbl2 = new Label { Text = "Stock", Top = 60, Left = 10 };
-            txtStock = new TextBox { Top = 60, Left = 140, Width = 100 };
-
-            Label lbl3 = new Label { Text = "Precio", Top = 100, Left = 10 };
-            txtPrecio = new TextBox { Top = 100, Left = 140, Width = 100 };
-
-            Label lbl4 = new Label { Text = "Fecha Venc.", Top = 140, Left = 10 };
-            dtpFechaVenc = new DateTimePicker { Top = 140, Left = 140, Width = 160, Format = DateTimePickerFormat.Short, ShowCheckBox = true };
-
-            Label lbl5 = new Label { Text = "Bodega", Top = 180, Left = 10 };
-            txtBodega = new TextBox { Top = 180, Left = 140, Width = 200 };
-
-            btnGuardar = new Button { Text = "Guardar", Top = 220, Left = 140 };
-            btnCancelar = new Button { Text = "Cancelar", Top = 220, Left = 240 };
-            btnGuardar.Click += (s, e) => { this.DialogResult = DialogResult.OK; }; // Solo UI
-            btnCancelar.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
-
-            this.Controls.AddRange(new Control[] { lbl1, txtNombre, lbl2, txtStock, lbl3, txtPrecio, lbl4, dtpFechaVenc, lbl5, txtBodega, btnGuardar, btnCancelar });
-        }
-
-        // M閠odo para que el integrador pueble los controles desde la capa de datos
-        public void SetValuesFromRow(DataGridViewRow row)
-        {
-            if (row == null) return;
-            txtNombre.Text = row.Cells.Count > 1 && row.Cells[1].Value != null ? row.Cells[1].Value.ToString() : string.Empty;
-            txtStock.Text = row.Cells.Count > 2 && row.Cells[2].Value != null ? row.Cells[2].Value.ToString() : string.Empty;
-            txtPrecio.Text = row.Cells.Count > 3 && row.Cells[3].Value != null ? row.Cells[3].Value.ToString() : string.Empty;
-            if (row.Cells.Count > 4 && row.Cells[4].Value != null && DateTime.TryParse(row.Cells[4].Value.ToString(), out DateTime dt))
+            if (MessageBox.Show("驴Est谩 seguro de eliminar este producto?", "Confirmar eliminaci贸n",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                dtpFechaVenc.Value = dt;
-                dtpFechaVenc.Checked = true;
+                try
+                {
+                    // TODO: Implementar eliminaci贸n de productos
+                    ModernUIHelper.MostrarNotificacion(this, "Producto eliminado exitosamente",
+                        ModernUIHelper.ColorPeligro);
+                    CargarProductos();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al eliminar producto: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else
-                dtpFechaVenc.Checked = false;
-            txtBodega.Text = row.Cells.Count > 5 && row.Cells[5].Value != null ? row.Cells[5].Value.ToString() : string.Empty;
         }
     }
 }
