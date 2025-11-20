@@ -102,7 +102,7 @@
             this.salirToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1786, 44);
+            this.menuStrip1.Size = new System.Drawing.Size(1786, 48);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -116,7 +116,7 @@
             this.productosToolStripMenuItem,
             this.bodegasToolStripMenuItem});
             this.inventarioToolStripMenuItem.Name = "inventarioToolStripMenuItem";
-            this.inventarioToolStripMenuItem.Size = new System.Drawing.Size(141, 36);
+            this.inventarioToolStripMenuItem.Size = new System.Drawing.Size(141, 40);
             this.inventarioToolStripMenuItem.Text = "Inventario";
             this.inventarioToolStripMenuItem.Click += new System.EventHandler(this.inventarioToolStripMenuItem_Click);
             // 
@@ -195,7 +195,7 @@
             this.registrarPagoClienteToolStripMenuItem,
             this.arqueoDiarioToolStripMenuItem});
             this.ventasToolStripMenuItem.Name = "ventasToolStripMenuItem";
-            this.ventasToolStripMenuItem.Size = new System.Drawing.Size(104, 36);
+            this.ventasToolStripMenuItem.Size = new System.Drawing.Size(104, 40);
             this.ventasToolStripMenuItem.Text = "Ventas";
             // 
             // gestionarClientesToolStripMenuItem
@@ -229,7 +229,7 @@
             this.registrarDepositoToolStripMenuItem,
             this.pagoAProveedorToolStripMenuItem});
             this.bancosToolStripMenuItem.Name = "bancosToolStripMenuItem";
-            this.bancosToolStripMenuItem.Size = new System.Drawing.Size(109, 36);
+            this.bancosToolStripMenuItem.Size = new System.Drawing.Size(109, 40);
             this.bancosToolStripMenuItem.Text = "Bancos";
             // 
             // cuentasBancariasToolStripMenuItem
@@ -259,7 +259,7 @@
             this.movimientosPorDiaToolStripMenuItem,
             this.saldoCuentasBancariasToolStripMenuItem});
             this.consultasToolStripMenuItem.Name = "consultasToolStripMenuItem";
-            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(137, 36);
+            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(137, 40);
             this.consultasToolStripMenuItem.Text = "Consultas";
             // 
             // saldoProveedoresToolStripMenuItem
@@ -295,18 +295,17 @@
             // salirToolStripMenuItem
             // 
             this.salirToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.salirToolStripMenuItem.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.salirToolStripMenuItem.Name = "salirToolStripMenuItem";
-            this.salirToolStripMenuItem.Size = new System.Drawing.Size(79, 36);
+            this.salirToolStripMenuItem.Size = new System.Drawing.Size(79, 40);
             this.salirToolStripMenuItem.Text = "Salir";
             // 
             // panelPrincipal
             // 
             this.panelPrincipal.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelPrincipal.Location = new System.Drawing.Point(0, 44);
+            this.panelPrincipal.Location = new System.Drawing.Point(0, 48);
             this.panelPrincipal.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.panelPrincipal.Name = "panelPrincipal";
-            this.panelPrincipal.Size = new System.Drawing.Size(1786, 1146);
+            this.panelPrincipal.Size = new System.Drawing.Size(1786, 1142);
             this.panelPrincipal.TabIndex = 1;
             this.panelPrincipal.Paint += new System.Windows.Forms.PaintEventHandler(this.panelPrincipal_Paint);
             // 

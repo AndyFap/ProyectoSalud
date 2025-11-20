@@ -42,6 +42,12 @@ namespace ProyectoSalud
             
             // Personalizar el panel principal
             panelPrincipal.BackColor = Color.White;
+            
+            // Personalizar el botón SALIR
+            salirToolStripMenuItem.BackColor = Color.FromArgb(239, 68, 68); // Rojo moderno
+            salirToolStripMenuItem.ForeColor = Color.White;
+            salirToolStripMenuItem.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            salirToolStripMenuItem.Padding = new Padding(12, 6, 12, 6);
         }
 
         private void AplicarColorSubItems(ToolStripMenuItem item)
@@ -83,16 +89,6 @@ namespace ProyectoSalud
                 Location = new Point(50, 80)
             };
             
-            // Subtítulo
-            Label lblSubtitulo = new Label
-            {
-                Text = "Sistema de Gestión Integral",
-                Font = new Font("Segoe UI", 16F),
-                ForeColor = Color.FromArgb(100, 100, 100),
-                AutoSize = true,
-                Location = new Point(50, 130)
-            };
-            
             // Mensaje de bienvenida
             Label lblMensaje = new Label
             {
@@ -100,10 +96,10 @@ namespace ProyectoSalud
                 Font = new Font("Segoe UI", 11F),
                 ForeColor = Color.FromArgb(150, 150, 150),
                 AutoSize = true,
-                Location = new Point(50, 180)
+                Location = new Point(50, 140)
             };
             
-            panelCentro.Controls.AddRange(new Control[] { lblTitulo, lblSubtitulo, lblMensaje });
+            panelCentro.Controls.AddRange(new Control[] { lblTitulo, lblMensaje });
             
             // Centrar el panel
             panelCentro.Location = new Point(
