@@ -1,6 +1,8 @@
 ﻿using ProyectoSalud.ProyectoSalud.Data;
 using ProyectoSalud.ProyectoSalud.Models;
+using ProyectoSalud.UI;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ProyectoSalud
@@ -9,6 +11,8 @@ namespace ProyectoSalud
     {
         private DataGridView dgv;
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
+        private Panel panelTitulo;
+        private Panel panelBotones;
 
         private ClientesDAO clienteDao;
 
@@ -16,15 +20,37 @@ namespace ProyectoSalud
         {
             clienteDao = new ClientesDAO(new Database());
             InitializeComponent();
+            ConfigurarInterfazModerna();
+        }
 
-            dgv = new DataGridView { Top = 10, Left = 10, Width = 700, Height = 300, ReadOnly = true };
-            btnNuevo = new Button { Text = "Nuevo", Top = 320, Left = 10 };
-            btnEditar = new Button { Text = "Editar", Top = 320, Left = 100 };
-            btnEliminar = new Button { Text = "Eliminar", Top = 320, Left = 190 };
-            btnRefrescar = new Button { Text = "Refrescar", Top = 320, Left = 280 };
+        private void ConfigurarInterfazModerna()
+        {
+            // Configurar el formulario
+            this.BackColor = ModernUIHelper.ColorFondo;
 
-            // Agregar controles al formulario
-            this.Controls.AddRange(new Control[] { dgv, btnNuevo, btnEditar, btnEliminar, btnRefrescar });
+            // Crear panel de título
+            panelTitulo = ModernUIHelper.CrearPanelTitulo("Gestión de Clientes", 60);
+
+            // Crear botones modernos
+            btnNuevo = ModernUIHelper.CrearBotonPrimario("Nuevo Cliente", 160);
+            btnEditar = ModernUIHelper.CrearBotonExito("Editar", 140);
+            btnEliminar = ModernUIHelper.CrearBotonPeligro("Eliminar", 140);
+            btnRefrescar = ModernUIHelper.CrearBotonInfo("Refrescar", 140);
+
+            // Crear panel de botones
+            panelBotones = ModernUIHelper.CrearPanelBotones(btnNuevo, btnEditar, btnEliminar, btnRefrescar);
+
+            // Crear y configurar DataGridView
+            dgv = new DataGridView
+            {
+                Dock = DockStyle.Fill
+            };
+            ModernUIHelper.AplicarEstiloDataGrid(dgv);
+
+            // Agregar controles en orden (el último agregado queda arriba en el Z-order)
+            this.Controls.Add(dgv);
+            this.Controls.Add(panelBotones);
+            this.Controls.Add(panelTitulo);
 
             // Conectar eventos
             btnNuevo.Click += BtnNuevo_Click;
@@ -40,7 +66,15 @@ namespace ProyectoSalud
 
         private void CargarClientes()
         {
-            dgv.DataSource = clienteDao.ObtenerClientes();
+            try
+            {
+                dgv.DataSource = clienteDao.ObtenerClientes();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar clientes: " + ex.Message, "Error", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
@@ -53,10 +87,13 @@ namespace ProyectoSalud
                     {
                         clienteDao.InsertarCliente(frm.ClienteInfo);
                         CargarClientes();
+                        ModernUIHelper.MostrarNotificacion(this, "Cliente creado exitosamente", 
+                            ModernUIHelper.ColorExito);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error al insertar cliente: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Error al insertar cliente: " + ex.Message, "Error", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -64,7 +101,12 @@ namespace ProyectoSalud
 
         private void BtnEditar_Click(object sender, EventArgs e)
         {
-            if (dgv.SelectedRows.Count == 0) return;
+            if (dgv.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Por favor seleccione un cliente para editar", "Información",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             var row = dgv.SelectedRows[0];
             Cliente cliente = new Cliente
@@ -83,10 +125,13 @@ namespace ProyectoSalud
                     {
                         clienteDao.ModificarCliente(frm.ClienteInfo);
                         CargarClientes();
+                        ModernUIHelper.MostrarNotificacion(this, "Cliente actualizado exitosamente", 
+                            ModernUIHelper.ColorExito);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error al modificar cliente: {ex.Message}");
+                        MessageBox.Show($"Error al modificar cliente: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -94,22 +139,31 @@ namespace ProyectoSalud
 
         private void BtnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgv.SelectedRows.Count == 0) return;
+            if (dgv.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Por favor seleccione un cliente para eliminar", "Información",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             var cellVal = dgv.SelectedRows[0].Cells["clienteID"].Value;
             if (cellVal == null || cellVal == DBNull.Value) return;
             int id = Convert.ToInt32(cellVal);
 
-            if (MessageBox.Show("¿Eliminar cliente?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("¿Está seguro de eliminar este cliente?", "Confirmar eliminación", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 try
                 {
                     clienteDao.EliminarCliente(id);
                     CargarClientes();
+                    ModernUIHelper.MostrarNotificacion(this, "Cliente eliminado exitosamente", 
+                        ModernUIHelper.ColorPeligro);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error al eliminar cliente: {ex.Message}");
+                    MessageBox.Show($"Error al eliminar cliente: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
