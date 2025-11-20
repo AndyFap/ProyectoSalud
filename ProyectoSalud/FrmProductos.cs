@@ -79,6 +79,11 @@ namespace ProyectoSalud
 
         }
 
+        private void FrmProductos_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
             using (var frm = new FrmProductoEdicion())

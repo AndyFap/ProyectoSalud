@@ -38,7 +38,9 @@ namespace ProyectoSalud
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmCuentasBancarias";
             this.Text = "Gestión de Cuentas Bancarias";
+            this.Load += new System.EventHandler(this.FrmCuentasBancarias_Load);
             this.ResumeLayout(false);
+
         }
 
         #endregion

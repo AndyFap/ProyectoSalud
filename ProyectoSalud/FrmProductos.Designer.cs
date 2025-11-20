@@ -38,7 +38,9 @@ namespace ProyectoSalud
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmProductos";
             this.Text = "Gestión de Productos";
+            this.Load += new System.EventHandler(this.FrmProductos_Load_1);
             this.ResumeLayout(false);
+
         }
 
         #endregion

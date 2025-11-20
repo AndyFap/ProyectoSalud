@@ -1,6 +1,6 @@
 ﻿namespace ProyectoSalud.ProyectoSalud.Models
 {
-    partial class FrmProductoEdicion : System.Windows.Forms.Form
+    partial class FrmCuentaBancariaEdicion : System.Windows.Forms.Form
     {
         /// <summary>
         /// Required designer variable.

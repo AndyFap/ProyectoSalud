@@ -1,3 +1,5 @@
+using ProyectoSalud.ProyectoSalud.Models;
+using ProyectoSalud.ProyectoSalud.Data;
 using ProyectoSalud.UI;
 using System;
 using System.Drawing;
@@ -8,52 +10,48 @@ namespace ProyectoSalud
     public partial class FrmCuentasBancarias : Form
     {
         private DataGridView dgv;
-        private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
+        private Button btnNuevo, btnRefrescar;
         private Panel panelTitulo;
         private Panel panelBotones;
 
+        private CuentaBancariaDAO cuentaDao;
+
         public FrmCuentasBancarias()
         {
+            cuentaDao = new CuentaBancariaDAO(new Database());
             InitializeComponent();
             ConfigurarInterfazModerna();
         }
 
         private void ConfigurarInterfazModerna()
         {
-            // Configurar el formulario
+            // Fondo del formulario
             this.BackColor = ModernUIHelper.ColorFondo;
 
-            // Crear panel de título
-            panelTitulo = ModernUIHelper.CrearPanelTitulo("Gestión de Cuentas Bancarias", 60);
+            // Título
+            panelTitulo = ModernUIHelper.CrearPanelTitulo("Cuentas Bancarias", 70);
 
-            // Crear botones modernos
-            btnNuevo = ModernUIHelper.CrearBotonPrimario("Nueva Cuenta", 170);
-            btnEditar = ModernUIHelper.CrearBotonExito("Editar", 140);
-            btnEliminar = ModernUIHelper.CrearBotonPeligro("Eliminar", 140);
+            // Botón para agregar cuentas
+            btnNuevo = ModernUIHelper.CrearBotonPrimario("Nueva Cuenta", 180);
+            btnNuevo.Click += BtnNuevo_Click;
+
+            // Botón para refrescar
             btnRefrescar = ModernUIHelper.CrearBotonInfo("Refrescar", 140);
+            btnRefrescar.Click += (s, e) => CargarCuentas();
 
-            // Crear panel de botones
-            panelBotones = ModernUIHelper.CrearPanelBotones(btnNuevo, btnEditar, btnEliminar, btnRefrescar);
+            // Panel de botones
+            panelBotones = ModernUIHelper.CrearPanelBotones(btnNuevo, btnRefrescar);
 
-            // Crear y configurar DataGridView
-            dgv = new DataGridView
-            {
-                Dock = DockStyle.Fill
-            };
+            // DataGridView
+            dgv = new DataGridView { Dock = DockStyle.Fill };
             ModernUIHelper.AplicarEstiloDataGrid(dgv);
 
-            // Agregar controles en orden
+            // Agregar controles
             this.Controls.Add(dgv);
             this.Controls.Add(panelBotones);
             this.Controls.Add(panelTitulo);
 
-            // Conectar eventos
-            btnNuevo.Click += BtnNuevo_Click;
-            btnEditar.Click += BtnEditar_Click;
-            btnEliminar.Click += BtnEliminar_Click;
-            btnRefrescar.Click += (s, e) => CargarCuentas();
-            
-            // Cargar datos al iniciar
+            // Cargar datos al abrir
             this.Load += (s, e) => CargarCuentas();
         }
 
@@ -61,91 +59,40 @@ namespace ProyectoSalud
         {
             try
             {
-                // TODO: Implementar carga de cuentas desde la base de datos
-                // dgv.DataSource = cuentasDAO.ObtenerCuentas();
-                
-                // Formatear columna de saldo como moneda
-                if (dgv.Columns["Saldo"] != null)
-                {
-                    dgv.Columns["Saldo"].DefaultCellStyle.Format = "C2";
-                    dgv.Columns["Saldo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                }
+                dgv.DataSource = cuentaDao.ObtenerCuentas();    
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar cuentas bancarias: " + ex.Message, "Error",
+                MessageBox.Show($"Error al cargar cuentas: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private void FrmCuentasBancarias_Load(object sender, EventArgs e)
+        {
+            CargarCuentas();
+        }
+
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-                "La funcionalidad de agregar cuentas bancarias está en desarrollo.\n\n" +
-                "Próximamente podrás agregar nuevas cuentas al sistema.",
-                "Función en Desarrollo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-            
-            // TODO: Implementar formulario de edición de cuentas
-            // using (var frm = new FrmCuentaEdicion())
-            // {
-            //     if (frm.ShowDialog() == DialogResult.OK)
-            //     {
-            //         CargarCuentas();
-            //     }
-            // }
-        }
-
-        private void BtnEditar_Click(object sender, EventArgs e)
-        {
-            if (dgv.SelectedRows.Count == 0)
+            using (var frm = new FrmCuentaBancariaEdicion())
             {
-                MessageBox.Show("Por favor seleccione una cuenta para editar", "Información",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            
-            MessageBox.Show(
-                "La funcionalidad de editar cuentas bancarias está en desarrollo.\n\n" +
-                "Próximamente podrás modificar la información de las cuentas.",
-                "Función en Desarrollo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-            
-            // TODO: Implementar edición de cuentas
-            // using (var frm = new FrmCuentaEdicion(cuentaSeleccionada))
-            // {
-            //     if (frm.ShowDialog() == DialogResult.OK)
-            //     {
-            //         CargarCuentas();
-            //     }
-            // }
-        }
-
-        private void BtnEliminar_Click(object sender, EventArgs e)
-        {
-            if (dgv.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Por favor seleccione una cuenta para eliminar", "Información",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            if (MessageBox.Show("¿Está seguro de eliminar esta cuenta bancaria?", "Confirmar eliminación",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                try
+                if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    // TODO: Implementar eliminación de cuentas
-                    ModernUIHelper.MostrarNotificacion(this, "Cuenta eliminada exitosamente",
-                        ModernUIHelper.ColorPeligro);
-                    CargarCuentas();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al eliminar cuenta: {ex.Message}", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    try
+                    {
+                        cuentaDao.InsertarCuenta(frm.CuentaInfo);
+                        ModernUIHelper.MostrarNotificacion(this,
+                            "Cuenta agregada exitosamente",
+                            ModernUIHelper.ColorExito);
+
+                        CargarCuentas();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al insertar cuenta: {ex.Message}",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

@@ -2,7 +2,6 @@ using ProyectoSalud.ProyectoSalud.Data;
 using ProyectoSalud.ProyectoSalud.Models;
 using ProyectoSalud.UI;
 using System;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -77,7 +76,7 @@ namespace ProyectoSalud
 
         private void FrmProveedores_Load(object sender, EventArgs e)
         {
-
+            CargarProveedores();
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)
