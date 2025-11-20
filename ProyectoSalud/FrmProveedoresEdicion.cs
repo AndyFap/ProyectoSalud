@@ -20,41 +20,22 @@ namespace ProyectoSalud.ProyectoSalud.Models
         private void InitializeComponent()
         {
             this.SuspendLayout();
-
-            // TextBoxes
-            txtNombre = new TextBox { Left = 140, Top = 20, Width = 200 };
-            txtContacto = new TextBox { Left = 140, Top = 55, Width = 200 };
-            txtSaldo = new TextBox { Left = 140, Top = 90, Width = 200 };
-            txtLimiteCredito = new TextBox { Left = 140, Top = 125, Width = 200 };
-            txtCreditoDisponible = new TextBox { Left = 140, Top = 160, Width = 200 };
-
-            // Labels
-            var lblNombre = new Label { Left = 20, Top = 23, Text = "Nombre:", AutoSize = true };
-            var lblContacto = new Label { Left = 20, Top = 58, Text = "Contacto:", AutoSize = true };
-            var lblSaldo = new Label { Left = 20, Top = 93, Text = "Saldo:", AutoSize = true };
-            var lblLimite = new Label { Left = 20, Top = 128, Text = "Límite crédito:", AutoSize = true };
-            var lblDisponible = new Label { Left = 20, Top = 163, Text = "Crédito disponible:", AutoSize = true };
-
-            // Botón Guardar
-            btnGuardar = new Button { Left = 140, Top = 200, Width = 100, Text = "Guardar" };
-            btnGuardar.Click += BtnGuardar_Click;
-
-            // Form
-            this.ClientSize = new Size(370, 250);
-            this.Controls.AddRange(new Control[] {
-                lblNombre, txtNombre,
-                lblContacto, txtContacto,
-                lblSaldo, txtSaldo,
-                lblLimite, txtLimiteCredito,
-                lblDisponible, txtCreditoDisponible,
-                btnGuardar
-            });
+            // 
+            // FrmProveedoresEdicion
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "FrmProveedoresEdicion";
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Load += new System.EventHandler(this.FrmProveedoresEdicion_Load_3);
             this.ResumeLayout(false);
+
         }
 
         private void FrmProveedoresEdicion_Load_2(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FrmProveedoresEdicion_Load_3(object sender, EventArgs e)
         {
 
         }

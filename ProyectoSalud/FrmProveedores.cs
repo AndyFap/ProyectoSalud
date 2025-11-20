@@ -2,6 +2,7 @@ using ProyectoSalud.ProyectoSalud.Data;
 using ProyectoSalud.ProyectoSalud.Models;
 using ProyectoSalud.UI;
 using System;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -72,6 +73,11 @@ namespace ProyectoSalud
                 MessageBox.Show("Error al cargar proveedores: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void FrmProveedores_Load(object sender, EventArgs e)
+        {
+
         }
 
         private void BtnNuevo_Click(object sender, EventArgs e)

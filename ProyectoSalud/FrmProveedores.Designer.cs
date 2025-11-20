@@ -38,7 +38,9 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmProveedores";
             this.Text = "Gestión de Proveedores";
+            this.Load += new System.EventHandler(this.FrmProveedores_Load);
             this.ResumeLayout(false);
+
         }
 
         #endregion

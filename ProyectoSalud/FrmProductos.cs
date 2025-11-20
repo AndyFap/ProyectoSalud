@@ -1,3 +1,5 @@
+using ProyectoSalud.ProyectoSalud.Data;
+using ProyectoSalud.ProyectoSalud.Models;
 using ProyectoSalud.UI;
 using System;
 using System.Drawing;
@@ -11,9 +13,11 @@ namespace ProyectoSalud
         private Button btnNuevo, btnEditar, btnEliminar, btnRefrescar;
         private Panel panelTitulo;
         private Panel panelBotones;
+        private ProductosDAO productosDAO;
 
         public FrmProductos()
         {
+            productosDAO = new ProductosDAO(new Database());
             InitializeComponent();
             ConfigurarInterfazModerna();
         }
@@ -52,7 +56,7 @@ namespace ProyectoSalud
             btnEditar.Click += BtnEditar_Click;
             btnEliminar.Click += BtnEliminar_Click;
             btnRefrescar.Click += (s, e) => CargarProductos();
-            
+
             // Cargar datos al iniciar
             this.Load += (s, e) => CargarProductos();
         }
@@ -61,8 +65,7 @@ namespace ProyectoSalud
         {
             try
             {
-                // TODO: Implementar carga de productos desde la base de datos
-                // dgv.DataSource = productosDAO.ObtenerProductos();
+                dgv.DataSource = productosDAO.ObtenerProducto();
             }
             catch (Exception ex)
             {
@@ -71,23 +74,31 @@ namespace ProyectoSalud
             }
         }
 
+        private void FrmProductos_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-                "La funcionalidad de agregar productos está en desarrollo.\n\n" +
-                "Próximamente podrás agregar nuevos productos al inventario.",
-                "Función en Desarrollo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-            
-            // TODO: Implementar formulario de edición de productos
-            // using (var frm = new FrmProductoEdicion())
-            // {
-            //     if (frm.ShowDialog() == DialogResult.OK)
-            //     {
-            //         CargarProductos();
-            //     }
-            // }
+            using (var frm = new FrmProductoEdicion())
+            {
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        productosDAO.InsertarProducto(frm.ProductoInfo);
+                        ModernUIHelper.MostrarNotificacion(this, "Producto agregado exitosamente",
+                            ModernUIHelper.ColorExito);
+                        CargarProductos();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al insertar proveedor: " + ex.Message,
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
         private void BtnEditar_Click(object sender, EventArgs e)
@@ -98,22 +109,42 @@ namespace ProyectoSalud
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            
-            MessageBox.Show(
-                "La funcionalidad de editar productos está en desarrollo.\n\n" +
-                "Próximamente podrás modificar la información de los productos.",
-                "Función en Desarrollo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-            
-            // TODO: Implementar edición de productos
-            // using (var frm = new FrmProductoEdicion(productoSeleccionado))
-            // {
-            //     if (frm.ShowDialog() == DialogResult.OK)
-            //     {
-            //         CargarProductos();
-            //     }
-            // }
+
+            var row = dgv.SelectedRows[0];
+
+            Productos p = new Productos
+            {
+                productoID = Convert.ToInt32(row.Cells["productoID"].Value),
+                nombre = row.Cells["nombre"].Value.ToString(),
+                tipoProducto = row.Cells["tipoProducto"].Value.ToString(),
+                stock = Convert.ToInt32(row.Cells["stock"].Value),
+                stockMinimo = Convert.ToInt32(row.Cells["stockMinimo"].Value),
+                unidadMedida = row.Cells["unidadMedida"].Value.ToString(),
+                precio = Convert.ToDecimal(row.Cells["precio"].Value),
+                fechaVencimiento = row.Cells["fechaVencimiento"].Value == DBNull.Value 
+                    ? default(DateTime) 
+                    : Convert.ToDateTime(row.Cells["fechaVencimiento"].Value),
+                bodega = row.Cells["bodega"].Value.ToString()
+            };
+
+            using (var frm = new FrmProductoEdicion(p))
+            {
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        productosDAO.ModificarProveedor(frm.ProductoInfo);
+                        ModernUIHelper.MostrarNotificacion(this, "Producto actualizado exitosamente",
+                            ModernUIHelper.ColorExito);
+                        CargarProductos();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al modificar prodcuto: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
         private void BtnEliminar_Click(object sender, EventArgs e)
@@ -125,12 +156,17 @@ namespace ProyectoSalud
                 return;
             }
 
+            var cellVal = dgv.SelectedRows[0].Cells["productoID"].Value;
+            if (cellVal == null || cellVal == DBNull.Value) return;
+
+            int id = Convert.ToInt32(cellVal);
+
             if (MessageBox.Show("¿Está seguro de eliminar este producto?", "Confirmar eliminación",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 try
                 {
-                    // TODO: Implementar eliminación de productos
+                    productosDAO.EliminarProducto(id);
                     ModernUIHelper.MostrarNotificacion(this, "Producto eliminado exitosamente",
                         ModernUIHelper.ColorPeligro);
                     CargarProductos();
